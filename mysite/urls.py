@@ -27,10 +27,11 @@ SITE_ROOT = os.path.join(BASE_DIR, 'site')
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='home/main.html')),
-    path('', TemplateView.as_view(template_name='home/registration.html')),
+    path('registration/', TemplateView.as_view(template_name='registration/login.html')),
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path("accounts/", include("django.contrib.auth.urls")),
     path('autos/', include('autos.urls')),
+    path('cats/', include('cats.urls')),
     path('hello/', include('hello.urls')),
     path('polls/', include('polls.urls')),
     re_path(r'^site/(?P<path>.*)$', serve,

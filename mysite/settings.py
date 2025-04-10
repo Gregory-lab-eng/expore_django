@@ -26,6 +26,7 @@ SECRET_KEY = "django-insecure-7t%cerq9-8(wbfe4$%@01b18=_a!n15+077u33%=q7^s%aaoal
 DEBUG = True
 
 ALLOWED_HOSTS = [ '*' ]
+APP_NAME = 'Gre Django Lab'
 
 
 # Application definition
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     "hello.apps.HelloConfig",
     "home.apps.HomeConfig",
     "autos.apps.AutosConfig",
+    "cats.apps.CatsConfig",
     "polls.apps.PollsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
