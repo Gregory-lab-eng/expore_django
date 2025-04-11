@@ -1,50 +1,45 @@
 /* General Reset */
 #one {
-/*correct*/
   position: fixed;
-  width: 25%;
+  width: 20%;
   bottom: 5px;
   right: 5px;
   padding: 5px;
-  margin: 5px;
+  margin: 50px;
   border: 5px solid blue;
 
 }
 
 
 #two {
-/*correct*/
   position: fixed;
-  width: 25%;
-  top: 5px;
+  width: 20%;
+  top: 50px;
   right: 5px;
   padding: 5px;
-  margin: 5px;
+  margin: 50px;
   border: 5px solid green;
 }
 
 
 #three {
-    /*correct*/
-
   position: fixed;
-  width: 25%;
-  top: 5px;
+  width: 20%;
+  top: 50px;
   left: 5px;
   padding: 5px;
-  margin: 5px;
+  margin: 50px;
   border: 5px solid orange;
 }
 
 
 #four {
-    /*correct*/
   position: fixed;
-  width: 25%;
+  width: 20%;
   bottom: 5px;
   left: 5px;
   padding: 5px;
-  margin: 5px;
+  margin: 50px;
   border: 5px solid yellow;
 }
 
@@ -52,7 +47,7 @@
 #link {
   position: absolute;
   top: 0;
-  left: 50%;
+  left: 48%;
   font-size: 1.64rem;
   background-color: #0A4B33;
   box-sizing: border-box;
@@ -61,11 +56,14 @@
     height: 50px;
     padding: 15px 15px;
     line-height: 20px;
-    margin: -15 ;
+    margin: 15px ;
     text-decoration: none;
     text-decoration-line: none;
     text-decoration-thickness: initial;
     text-decoration-style: initial;
     text-decoration-color: initial;
-
+}
+#link a, #link a:visited {
+   color:white;
+   text-decoration:none;
 }
