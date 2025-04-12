@@ -29,6 +29,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'ads.apps.AdsConfig',
+    "hello.apps.HelloConfig",
+    "autos.apps.AutosConfig",
+    "cats.apps.CatsConfig",
+    "polls.apps.PollsConfig",
 
     # Extensions - installed with requirements.txt
     'django_extensions',
