@@ -1,0 +1,31 @@
+{% extends 'base_bootstrap.html' %}
+{% load app_tags %} <!-- see home/templatetags/app_tags.py and dj4e-samples/settings.py -->
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="border-radius:10px !important">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'ads:all' %}">{{ settings.APP_NAME }}</a>
+    <ul class="navbar-nav">
+      {% url 'ads:all' as x %}
+      <li {% if request.get_full_path == x %}class="active"{% endif %}>
+          <a class="nav-link" href="{% url 'ads:all' %}" role="button">Ads</a></li>
+    </ul>
+    <ul class="navbar-nav">
+      {% if user.is_authenticated %}
+      <li>
+         <a class="nav-link" href="{% url 'ads:ad_create' %}">Create Ad</a>
+      </li>
+      <li class="nav-item dropdown">
+         <a class="nav-link dropdown-toggle" href="#" id="rightnavDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="rightnavDropdown">
+            <li><a class="dropdown-item" href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a></li>
+        </ul>
+       </li>
+       {% else %}
+       <li class="nav-item"><a class="nav-link" href="{% url 'login' %}?next={% url 'ads:all' %}">Login</a></li>
+       {% endif %}
+    </ul>
+  </div>
+</nav>
+{% endblock %}
