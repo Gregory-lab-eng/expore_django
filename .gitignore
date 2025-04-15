@@ -2,3 +2,4 @@ key.pub
 key
 *.pub
 __pycache__
+github_settings.py

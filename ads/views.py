@@ -1,17 +1,48 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 # Create your views here.
-from ads.models import Ad, Comment
-from ads.owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
+from ads.models import Ad, Comment, Fav
+from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ads.forms import CreateForm, CommentForm
+from django.db.models import Q
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 class AdListView(OwnerListView):
     model = Ad
-    # By convention:
-    # template_name = "myarts/article_list.html"
+    template_name = "ads/ad_list.html"
+    def get(self, request) :
+        Ad_list = Ad.objects.all()
+        favorites = list()
+        if request.user.is_authenticated:
+            # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
+            rows = request.user.favorite_ads.values('id')
+            # favorites = [2, 4, ...] using list comprehension
+            favorites = [ row['id'] for row in rows ]
+
+
+        strval =  request.GET.get("search", False)
+        if strval :
+            # Simple title-only search
+            # objects = Post.objects.filter(title__contains=strval).select_related().distinct().order_by('-updated_at')[:10]
+
+            # Multi-field search
+            # __icontains for case-insensitive search
+            query = Q(title__icontains=strval)
+            query.add(Q(text__icontains=strval), Q.OR)
+            Ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
+        else :
+            Ad_list = Ad.objects.all().order_by('-updated_at')[:10]
+
+        # Augment the post_list
+        for obj in Ad_list:
+            obj.natural_updated = naturaltime(obj.updated_at)
+
+        ctx = {'ad_list' : Ad_list, 'favorites': favorites, 'search': strval}
+
+        return render(request, self.template_name, ctx)
 
 
 class AdDetailView(OwnerDetailView):
@@ -93,3 +124,31 @@ def stream_file(request, pk):
     response['Content-Length'] = len(pic.picture)
     response.write(pic.picture)
     return response
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.db.utils import IntegrityError
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Add PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        fav = Fav(user=request.user, ad=t)
+        try:
+            fav.save()  # In case of duplicate key
+        except IntegrityError:
+            pass
+        return HttpResponse("Favorite added 42")
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk) :
+        print("Delete PK",pk)
+        t = get_object_or_404(Ad, id=pk)
+        try:
+            Fav.objects.get(user=request.user, ad=t).delete()
+        except Fav.DoesNotExist:
+            pass
+
+        return HttpResponse("Favorite deleted 42")
