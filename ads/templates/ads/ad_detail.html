@@ -37,11 +37,22 @@
 Price: {{ ad.price }}
 </p>
 <p>
-Comment:{{ ad.text }}
+Comment: {{ ad.text }}
 </p>
 </p>
 <p>
+<b>
+Responsible: {{ ad.responsible }}
+</b>
 <p>
+{% for comment in comments %}
+<p> {{ comment.text }} by {{ ad.owner.username }}
+({{ comment.updated_at|date:"D, d M Y H:i" }})
+<!--{% if user == comment.owner %}
+<a href="{% url 'ads:ad_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}-->
+</p>
+{% endfor %}
 {% if user.is_authenticated %}
 <br clear="all"/>
 <p>
@@ -62,14 +73,6 @@ Comment:{{ ad.text }}
 </p>
 {% endif %}
 
-{% for comment in comments %}
-<p> {{ comment.text }}
-({{ comment.updated_at|naturaltime }})
-{% if user == comment.owner %}
-<a href="{% url 'ads:ad_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>
-{% endif %}
-</p>
-{% endfor %}
 </p>
 <p>
 <a href="{% url 'ads:all' %}">All ads</a>

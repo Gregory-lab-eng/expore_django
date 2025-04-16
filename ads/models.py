@@ -12,6 +12,11 @@ class Ad(models.Model) :
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True)
     text = models.TextField()
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    responsible = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='responsible'
+    )
     comments = models.ManyToManyField(settings.AUTH_USER_MODEL,
         through='Comment', related_name='comments_owned')
     # Favorites
