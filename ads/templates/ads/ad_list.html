@@ -44,10 +44,13 @@
         </a>
         {% endif %}
         <small>
+        <small>
         {% if ad.owner.username %}
-            posted by {{ ad.owner.username }}
+            by {{ ad.owner.username }}
         {% endif %}
-        {{ ad.natural_updated }}
+        <!--{{ ad.natural_updated }}-->
+        {{ ad.updated_at|date:"D, d M Y H:i" }}
+        </small>
         </small>
     </li>
   {% endfor %}

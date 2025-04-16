@@ -32,6 +32,7 @@ class AdListView(OwnerListView):
             # __icontains for case-insensitive search
             query = Q(title__icontains=strval)
             query.add(Q(text__icontains=strval), Q.OR)
+            query.add(Q(tags__name__in=[strval]), Q.OR)
             Ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
         else :
             Ad_list = Ad.objects.all().order_by('-updated_at')[:10]
@@ -48,7 +49,7 @@ class AdListView(OwnerListView):
 class AdDetailView(OwnerDetailView):
     model = Ad
     template_name = "ads/ad_detail.html"
-    fields = ['title','price','text','comments']
+    #fields = ['title','price','text','tags','comments']
     def get(self, request, pk) :
         x = get_object_or_404(Ad, id=pk)
         comments = Comment.objects.filter(ad=x).order_by('-updated_at')
@@ -76,6 +77,8 @@ class AdCreateView(LoginRequiredMixin, View):
         pic = form.save(commit=False)
         pic.owner = self.request.user
         pic.save()
+        form.save_m2m()
+
         return redirect(self.success_url)
 
 class AdUpdateView(LoginRequiredMixin, View):
@@ -98,13 +101,14 @@ class AdUpdateView(LoginRequiredMixin, View):
 
         pic = form.save(commit=False)
         pic.save()
+        form.save_m2m()
 
         return redirect(self.success_url)
 
 
 class AdDeleteView(OwnerDeleteView):
     model = Ad
-    fields = ['title','price','text']
+    fields = ['title','price','tags','text']
 
 class CommentCreateView(LoginRequiredMixin, View):
     def post(self, request, pk) :
