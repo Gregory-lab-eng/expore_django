@@ -9,3 +9,5 @@ It includes several applications to explore its difference functionalities.
 - Built-in authentication and user management
 - Custom middleware and context processors
 - API integration using Django REST Framework
+- ORM One-to-Many, Many-to-Many
+- Test features for real management system
