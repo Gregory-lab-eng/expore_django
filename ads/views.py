@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from ads.forms import CreateForm, CommentForm
 from django.db.models import Q
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from collections import defaultdict
 
 class AdListView(OwnerListView):
     model = Ad
@@ -22,7 +23,7 @@ class AdListView(OwnerListView):
             # favorites = [2, 4, ...] using list comprehension
             favorites = [ row['id'] for row in rows ]
 
-
+        grouped_tasks = defaultdict(list)
         strval =  request.GET.get("search", False)
         if strval :
             # Simple title-only search
@@ -36,13 +37,21 @@ class AdListView(OwnerListView):
             Ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
         else :
             Ad_list = Ad.objects.all().order_by('-updated_at')[:10]
+            tasks = Ad.objects.all()
+
+            for task in tasks:
+                grouped_tasks[task.responsible.username].append(task)
 
         # Augment the post_list
         for obj in Ad_list:
             obj.natural_updated = naturaltime(obj.updated_at)
 
-        ctx = {'ad_list' : Ad_list, 'favorites': favorites, 'search': strval}
-
+        ctx = {
+            'ad_list': Ad_list,
+            'favorites': favorites,
+            'search': strval,
+            'grouped_tasks': dict(grouped_tasks),  # Convert here
+        }
         return render(request, self.template_name, ctx)
 
 
@@ -136,7 +145,6 @@ from django.db.utils import IntegrityError
 @method_decorator(csrf_exempt, name='dispatch')
 class AddFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk) :
-        print("Add PK",pk)
         t = get_object_or_404(Ad, id=pk)
         fav = Fav(user=request.user, ad=t)
         try:
@@ -148,7 +156,6 @@ class AddFavoriteView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk) :
-        print("Delete PK",pk)
         t = get_object_or_404(Ad, id=pk)
         try:
             Fav.objects.get(user=request.user, ad=t).delete()

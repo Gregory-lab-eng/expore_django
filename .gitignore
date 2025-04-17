@@ -3,3 +3,4 @@ key
 *.pub
 __pycache__
 github_settings.py
+settings.py

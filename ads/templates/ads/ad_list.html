@@ -1,6 +1,8 @@
 {% extends "base_menu.html" %}
 {% block content %}
-<h1>Tasks</h1>
+<!--{% if user.is_authenticated %}-->
+<h3>Tasks</h3>
+<!-- Search Bar -->
 <div style="float:right">
 <!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
 <form>
@@ -12,6 +14,7 @@
 </form>
 </div>
 <p>
+<!-- Ad List Section -->
 {% if ad_list %}
 <ul>
   {% for ad in ad_list %}
@@ -21,7 +24,6 @@
         (<a href="{% url 'ads:ad_update' ad.id %}">Edit</a> |
         <a href="{% url 'ads:ad_delete' ad.id %}">Delete</a>)
         {% endif %}
-        {% if user.is_authenticated %}
         <!-- Two hrefs with two stacked icons each - one showing and one hidden -->
         <a href="#" onclick=
             "favPost('{% url 'ads:ad_unfavorite' ad.id %}', {{ ad.id }} );return false;"
@@ -42,7 +44,6 @@
         <i class="fa fa-star-o fa-stack-1x"></i>
         </span>
         </a>
-        {% endif %}
         <small>
         <small>
         {% if ad.owner.username %}
@@ -60,13 +61,24 @@
 {% endif %}
 </p>
 <p>
-<a href="{% url 'ads:ad_create' %}">Add an Ad</a> |
+<a href="{% url 'ads:ad_create' %}">Add a Task</a> |
 {% if user.is_authenticated %}
 <a href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a>
 {% else %}
 <a href="{% url 'login' %}?next={% url 'ads:all' %}">Login</a>
 {% endif %}
 </p>
+<!-- Grouped Tasks Section -->
+{% for user, tasks in grouped_tasks.items %}
+    <h3>Tasks for {{ user }}</h3>
+    <ul>
+        {% for task in tasks %}
+            <li><a href="{% url 'ads:ad_detail'  task.id %}">{{ task.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+<!--{% endif %}-->
+
 <script>
 function toggleInlineDisplay(star_id) {
     var elem = document.getElementById(star_id);
