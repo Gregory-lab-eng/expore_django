@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.views import View
+from django.views.generic import TemplateView
 from django.conf import settings
 
 # Create your views here.
@@ -8,13 +7,16 @@ from django.conf import settings
 # running in various configurations
 
 
-class HomeView(View):
-    def get(self, request):
-        print(request.get_host())
-        host = request.get_host()
-        islocal = host.find('localhost') >= 0 or host.find('127.0.0.1') >= 0
-        context = {
+class HomeView(TemplateView):
+    template_name = 'home/main.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
             'installed': settings.INSTALLED_APPS,
-            'islocal': islocal
-        }
-        return render(request, 'home/main.html', context)
+            'my_statement': "Nice to see you!"
+        })
+        return context
+
+    def say_welcome(self):
+        return 'Welcome'

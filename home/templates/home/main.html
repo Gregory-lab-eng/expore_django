@@ -1,12 +1,14 @@
 {% extends "base_bootstrap.html" %}
 {% block content %}
-    <h1>Welcome to {{ settings.APP_NAME }}</h1>
-    <p>
-    <p>You can <a href="/accounts/login">Login</a> if you like.</p>
-    <li><a href="ads" target="_blank">ads</a> - Ads aplication</li>
-    <li><a href="autos" target="_blank">autos</a> - Autos CRUD</li>
-    <li><a href="cats" target="_blank">cats</a> - Cats CRUD</li>
-    <li><a href="polls" target="_blank">poll</a> - Polls(django tutorial)</li>
-    <li><a href="hello" target="_blank">hello</a> - Hello(cookies handling)</li>
-    </p>
+
+<h1>{{ view.say_welcome }} to {{ settings.APP_NAME }}</h1>
+<h2>{{ my_statement }}</h2>
+<p>
+<p>You can <a href="/accounts/login">Login</a> if you like.</p>
+<li><a href="ads" target="_blank">ads</a> - Ads aplication</li>
+<li><a href="autos" target="_blank">autos</a> - Autos CRUD</li>
+<li><a href="cats" target="_blank">cats</a> - Cats CRUD</li>
+<li><a href="polls" target="_blank">poll</a> - Polls(django tutorial)</li>
+<li><a href="hello" target="_blank">hello</a> - Hello(cookies handling)</li>
+</p>
 {% endblock content %}

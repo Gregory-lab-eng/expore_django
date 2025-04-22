@@ -28,7 +28,7 @@
 <a href="{% url 'ads:ad_delete' ad.id %}"><i class="fa fa-trash"></i></a>
 {% endif %}
 </span>
-<h1>{{ ad.title }}</h1>
+<h2>{{ ad.title }}</h2>
 {% if ad.content_type %}
 <img style="float:right; max-width:50%;" src="{% url 'ads:ad_picture' ad.id %}"
     onclick="document.getElementById('overlay').style.display = 'block';">
@@ -37,7 +37,7 @@
 Price: {{ ad.price }}
 </p>
 <p>
-Comment: {{ ad.text }}
+<b>Task: {{ ad.text }}</b>
 </p>
 </p>
 <p>
@@ -46,7 +46,7 @@ Responsible: {{ ad.responsible }}
 </b>
 <p>
 {% for comment in comments %}
-<p> {{ comment.text }} by {{ ad.owner.username }}
+<p> {{ comment.text }} by {{ comment.owner.username }}
 ({{ comment.updated_at|date:"D, d M Y H:i" }})
 <!--{% if user == comment.owner %}
 <a href="{% url 'ads:ad_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>

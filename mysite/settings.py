@@ -1,5 +1,5 @@
 """
-Django settings for samples project.
+Django settings for grainlog project.
 """
 
 import os
@@ -8,12 +8,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Used for a default title
-APP_NAME = 'Gregory Lab'   # Add
+APP_NAME = 'Gregory Lab'
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+wvh$25*pnt*lh@rl2c^%f07(ou=j9+_$h!l$n_oi#=c1p02)#'
+SECRET_KEY = ''
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -28,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'ads.apps.AdsConfig',
+    "ads.apps.AdsConfig",
     "hello.apps.HelloConfig",
     "autos.apps.AutosConfig",
     "cats.apps.CatsConfig",
@@ -46,9 +45,7 @@ INSTALLED_APPS = [
 
 ]
 
-# When we get to tagging
 
-# When we get to crispy forms :)
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
@@ -62,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',   # Add
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -78,9 +75,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'home.context_processors.settings',      # Add
-                'social_django.context_processors.backends',  # Add
-                'social_django.context_processors.login_redirect', # Add
+                'home.context_processors.settings',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -181,7 +178,7 @@ LOGIN_REDIRECT_URL = '/'
 # Don't set default LOGIN_URL - let django.contrib.auth set it when it is loaded
 # LOGIN_URL = '/accounts/login'
 
-# Needed for 3.2 and later
+
 # https://stackoverflow.com/questions/67783120/warning-auto-created-primary-key-used-when-not-defining-a-primary-key-type-by
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 

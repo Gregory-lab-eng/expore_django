@@ -22,7 +22,8 @@ from django.views.static import serve
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='home/main.html')),
+    #path('', TemplateView.as_view(template_name='home/main.html')),
+    path('', include('home.urls')),
     path('ads/', include('ads.urls')),  # Change to ads.urls
     path('admin/', admin.site.urls),  # Keep
     path('accounts/', include('django.contrib.auth.urls')),  # Keep
@@ -31,11 +32,6 @@ urlpatterns = [
     path('cats/', include('cats.urls')),
     path('hello/', include('hello.urls')),
     path('polls/', include('polls.urls')),
-
-    # Sample applications
-
-    #path('autos/', include('autos.urls')),
-
 ]
 
 # Serve the static HTML
