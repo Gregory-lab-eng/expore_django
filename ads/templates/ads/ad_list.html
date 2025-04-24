@@ -1,7 +1,7 @@
 {% extends "base_menu.html" %}
 {% block content %}
 <!--{% if user.is_authenticated %}-->
-<h3>Tasks</h3>
+<!--<h3>Tasks</h3>-->
 <!-- Search Bar -->
 <div style="float:right">
 <!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
@@ -15,52 +15,52 @@
 </div>
 <p>
 <!-- Ad List Section -->
-{% if ad_list %}
-<ul>
-  {% for ad in ad_list %}
-    <li>
-        <a href="{% url 'ads:ad_detail'  ad.id %}">{{ ad.title }}</a>
-        {% if ad.owner == user %}
-        (<a href="{% url 'ads:ad_update' ad.id %}">Edit</a> |
-        <a href="{% url 'ads:ad_delete' ad.id %}">Delete</a>)
-        {% endif %}
+<!--{% if ad_list %}-->
+<!--<ul>-->
+<!--  {% for ad in ad_list %}-->
+<!--    <li>-->
+<!--        <a href="{% url 'ads:ad_detail'  ad.id %}">{{ ad.title | capfirst }}</a>-->
+<!--        {% if ad.owner == user %}-->
+<!--        (<a href="{% url 'ads:ad_update' ad.id %}">Edit</a> |-->
+<!--        <a href="{% url 'ads:ad_delete' ad.id %}">Delete</a>)-->
+<!--        {% endif %}-->
         <!-- Two hrefs with two stacked icons each - one showing and one hidden -->
-        <a href="#" onclick=
-            "favPost('{% url 'ads:ad_unfavorite' ad.id %}', {{ ad.id }} );return false;"
-            {% if ad.id not in favorites %} style="display: none;" {% endif %}
-            id="favorite_star_{{ad.id}}">
-        <span class="fa-stack" style="vertical-align: middle;">
-        <i class="fa fa-star fa-stack-1x" style="color: orange;"></i>
-        <i class="fa fa-star-o fa-stack-1x"></i>
-        </span>
-        </a>
+<!--        <a href="#" onclick=-->
+<!--            "favPost('{% url 'ads:ad_unfavorite' ad.id %}', {{ ad.id }} );return false;"-->
+<!--            {% if ad.id not in favorites %} style="display: none;" {% endif %}-->
+<!--            id="favorite_star_{{ad.id}}">-->
+<!--        <span class="fa-stack" style="vertical-align: middle;">-->
+<!--        <i class="fa fa-star fa-stack-1x" style="color: orange;"></i>-->
+<!--        <i class="fa fa-star-o fa-stack-1x"></i>-->
+<!--        </span>-->
+<!--        </a>-->
         <!-- the second href -->
-        <a href="#" onclick=
-             "favPost('{% url 'ads:ad_favorite' ad.id %}', {{ ad.id }} );return false;"
-            {% if ad.id in favorites %} style="display: none;" {% endif %}
-            id="unfavorite_star_{{ad.id}}">
-        <span class="fa-stack" style="vertical-align: middle;">
-        <i class="fa fa-star fa-stack-1x" style="display: none; color: orange;"></i>
-        <i class="fa fa-star-o fa-stack-1x"></i>
-        </span>
-        </a>
-        <small>
-        <small>
-        {% if ad.owner.username %}
-            by {{ ad.owner.username }}
-        {% endif %}
+<!--        <a href="#" onclick=-->
+<!--             "favPost('{% url 'ads:ad_favorite' ad.id %}', {{ ad.id }} );return false;"-->
+<!--            {% if ad.id in favorites %} style="display: none;" {% endif %}-->
+<!--            id="unfavorite_star_{{ad.id}}">-->
+<!--        <span class="fa-stack" style="vertical-align: middle;">-->
+<!--        <i class="fa fa-star fa-stack-1x" style="display: none; color: orange;"></i>-->
+<!--        <i class="fa fa-star-o fa-stack-1x"></i>-->
+<!--        </span>-->
+<!--        </a>-->
+<!--        <small>-->
+<!--        <small>-->
+<!--        {% if ad.owner.username %}-->
+<!--            by {{ ad.owner.username }}-->
+<!--        {% endif %}-->
         <!--{{ ad.natural_updated }}-->
-        {{ ad.updated_at|date:"D, d M Y H:i" }}
-        </small>
-        </small>
-    </li>
-  {% endfor %}
-</ul>
-{% else %}
-  <p>There are no ads in the database.</p>
-{% endif %}
-</p>
-<p>
+<!--        {{ ad.updated_at|date:"D, d M Y H:i" }}-->
+<!--        </small>-->
+<!--        </small>-->
+<!--    </li>-->
+<!--  {% endfor %}-->
+<!--</ul>-->
+<!--{% else %}-->
+<!--  <p>There are no ads in the database.</p>-->
+<!--{% endif %}-->
+<!--</p>-->
+<!--<p>-->
 <!--<a href="{% url 'ads:ad_create' %}">Add a Task</a> |
 {% if user.is_authenticated %}
 <a href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a>
@@ -73,7 +73,21 @@
     <h3>Tasks for {{ user }}</h3>
     <ul>
         {% for task in tasks %}
-            <li><a href="{% url 'ads:ad_detail'  task.id %}">{{ task.title }}</a></li>
+            <li>
+                <a href="{% url 'ads:ad_detail'  task.id %}">{{ task.title | capfirst }} </a>
+                {% if task.last_comment_content %}
+                <small>
+                    <small>
+                          <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                        {{ task.last_comment_time|date:"d.m H:i" }}
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        {{ task.last_comment_content}}
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        by {{task.last_comment_owner}}
+                    </small>
+                </small>
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
 {% endfor %}

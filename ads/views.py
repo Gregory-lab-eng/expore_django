@@ -1,56 +1,80 @@
+from collections import defaultdict
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-# Create your views here.
-from ads.models import Ad, Comment, Fav
-from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from ads.forms import CreateForm, CommentForm
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Subquery
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from collections import defaultdict
+
+from ads.forms import CreateForm, CommentForm
+from ads.models import Ad, Comment, Fav
+from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
+
 
 class AdListView(OwnerListView):
     model = Ad
     template_name = "ads/ad_list.html"
-    def get(self, request) :
-        Ad_list = Ad.objects.all()
-        favorites = list()
-        if request.user.is_authenticated:
-            # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
-            rows = request.user.favorite_ads.values('id')
-            # favorites = [2, 4, ...] using list comprehension
-            favorites = [ row['id'] for row in rows ]
 
+    def get_queryset(self, search_query=None):
+        """
+        Fetch ads based on a search query or return the most recent ads.
+        """
+        if search_query:
+            query = Q(title__icontains=search_query)
+            query.add(Q(text__icontains=search_query), Q.OR)
+            query.add(Q(tags__name__in=[search_query]), Q.OR)
+            return Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
+        return Ad.objects.all().order_by('-updated_at')[:10]
+
+    def get_favorites(self, user):
+        """
+        Fetch the IDs of the ads marked as favorites by the user.
+        """
+        if user.is_authenticated:
+            rows = user.favorite_ads.values('id')
+            return [row['id'] for row in rows]
+        return []
+
+    def get_grouped_tasks(self):
+        """
+        Group tasks (ads) by the responsible user's username and sort them by the last comment time.
+        """
         grouped_tasks = defaultdict(list)
-        strval =  request.GET.get("search", False)
-        if strval :
-            # Simple title-only search
-            # objects = Post.objects.filter(title__contains=strval).select_related().distinct().order_by('-updated_at')[:10]
+        latest_comment = Comment.objects.filter(ad=OuterRef('pk')).order_by('-updated_at')
+        tasks = Ad.objects.annotate(
+            last_comment_time=Subquery(latest_comment.values('updated_at')[:1]),
+            last_comment_content=Subquery(latest_comment.values('text')[:1]),
+            last_comment_owner=Subquery(latest_comment.values('owner__username')[:1])
+        ).order_by('-last_comment_time')
 
-            # Multi-field search
-            # __icontains for case-insensitive search
-            query = Q(title__icontains=strval)
-            query.add(Q(text__icontains=strval), Q.OR)
-            query.add(Q(tags__name__in=[strval]), Q.OR)
-            Ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
-        else :
-            Ad_list = Ad.objects.all().order_by('-updated_at')[:10]
-            tasks = Ad.objects.all()
+        for task in tasks:
+            grouped_tasks[task.responsible.username].append(task)
+        return grouped_tasks
 
-            for task in tasks:
-                grouped_tasks[task.responsible.username].append(task)
+    def augment_ads(self, ads):
+        """
+        Add a human-readable timestamp (natural time) to each ad.
+        """
+        for ad in ads:
+            ad.natural_updated = naturaltime(ad.updated_at)
 
-        # Augment the post_list
-        for obj in Ad_list:
-            obj.natural_updated = naturaltime(obj.updated_at)
+    def get(self, request):
+        """
+        Handle GET requests and render the ad list view.
+        """
+        search_query = request.GET.get("search", False)
+        ad_list = self.get_queryset(search_query)
+        self.augment_ads(ad_list)
+        favorites = self.get_favorites(request.user)
+        grouped_tasks = self.get_grouped_tasks()
 
         ctx = {
-            'ad_list': Ad_list,
+            'ad_list': ad_list,
             'favorites': favorites,
-            'search': strval,
-            'grouped_tasks': dict(grouped_tasks),  # Convert here
+            'search': search_query,
+            'grouped_tasks': dict(grouped_tasks),  # Convert defaultdict to a regular dictionary
         }
         return render(request, self.template_name, ctx)
 
