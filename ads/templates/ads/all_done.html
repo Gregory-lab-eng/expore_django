@@ -1,0 +1,9 @@
+{% extends "base_menu.html" %}
+{% block content %}
+
+<h2>Completed Tasks</h2>
+    {% for ad in object_list %}
+       <p style ="background-color: LightGreen;"> <a href="{% url 'ads:ad_detail' ad.id %}">{{ ad.title | capfirst }}</a></p>
+    {% endfor %}
+
+{% endblock %}

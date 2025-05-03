@@ -1,10 +1,13 @@
 from django.urls import path, reverse_lazy
 from . import views
 
+
 app_name='ads'
 urlpatterns = [
     path('', views.AdListView.as_view(), name='all'),
+    path('done/', views.AdDoneListView.as_view(), name='all_done'),
     path('ad/<int:pk>', views.AdDetailView.as_view(), name='ad_detail'),
+    path('task/<int:pk>/done/', views.mark_task_done, name='mark_task_done'),
     path('ad/create', views.AdCreateView.as_view(success_url=reverse_lazy('ads:all')), name='ad_create'),
     path('ad/<int:pk>/update',
         views.AdUpdateView.as_view(success_url=reverse_lazy('ads:all')), name='ad_update'),

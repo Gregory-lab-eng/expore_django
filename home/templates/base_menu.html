@@ -7,16 +7,22 @@
     <ul class="navbar-nav">
       {% url 'ads:all' as x %}
       <li {% if request.get_full_path == x %}class="active"{% endif %}>
-          <a class="nav-link" href="{% url 'ads:all' %}" role="button">Ads</a></li>
+          <a class="nav-link" href="{% url 'ads:all' %}" role="button">GL</a></li>
     </ul>
     <ul class="navbar-nav">
       {% if user.is_authenticated %}
       <li>
-         <a class="nav-link" href="{% url 'ads:ad_create' %}">Create Ad</a>
+         <a class="nav-link" href="{% url 'ads:all' %}">All Tasks</a>
+      </li>
+      <li>
+         <a class="nav-link" href="{% url 'ads:all_done' %}">Done Tasks</a>
+      </li>
+      <li>
+         <a class="nav-link" href="{% url 'ads:ad_create' %}">Create Task</a>
       </li>
       <li class="nav-item dropdown">
          <a class="nav-link dropdown-toggle" href="#" id="rightnavDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
+
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="rightnavDropdown">
             <li><a class="dropdown-item" href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a></li>

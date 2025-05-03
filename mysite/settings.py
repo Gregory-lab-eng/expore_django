@@ -3,6 +3,10 @@ Django settings for grainlog project.
 """
 
 import os
+import environ
+env = environ.Env()
+environ.Env.read_env()
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -10,8 +14,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Used for a default title
 APP_NAME = 'Gregory Lab'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
 
 DEBUG = True
 
@@ -39,9 +41,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'rest_framework',
     'social_django',
-    'taggit',
     'home.apps.HomeConfig',
-
+    'tinymce',
 
 ]
 
@@ -49,7 +50,6 @@ INSTALLED_APPS = [
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-TAGGIT_CASE_INSENSITIVE = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,7 +85,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 400,
+    'width': 800,
+    'plugins': 'link image code',
+    'toolbar': 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | link image code',
+}
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -144,6 +149,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 
 # Add the settings below
 

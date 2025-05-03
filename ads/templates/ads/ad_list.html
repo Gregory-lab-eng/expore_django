@@ -73,6 +73,7 @@
     <h3>Tasks for {{ user }}</h3>
     <ul>
         {% for task in tasks %}
+            {% if not task.is_done %}
             <li>
                 <a href="{% url 'ads:ad_detail'  task.id %}">{{ task.title | capfirst }} </a>
                 {% if task.last_comment_content %}
@@ -81,13 +82,14 @@
                           <br>&nbsp;&nbsp;&nbsp;&nbsp;
                         {{ task.last_comment_time|date:"d.m H:i" }}
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        {{ task.last_comment_content}}
+                        {{ task.last_comment_content }}
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         by {{task.last_comment_owner}}
                     </small>
                 </small>
                 {% endif %}
             </li>
+            {% endif %}
         {% endfor %}
     </ul>
 {% endfor %}

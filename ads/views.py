@@ -7,6 +7,10 @@ from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, OuterRef, Subquery
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.db.utils import IntegrityError
+from django.utils.html import strip_tags
 
 from ads.forms import CreateForm, CommentForm
 from ads.models import Ad, Comment, Fav
@@ -50,6 +54,7 @@ class AdListView(OwnerListView):
         ).order_by('-last_comment_time')
 
         for task in tasks:
+            task.last_comment_content = strip_tags(task.last_comment_content) if task.last_comment_content else ""
             grouped_tasks[task.responsible.username].append(task)
         return grouped_tasks
 
@@ -79,16 +84,27 @@ class AdListView(OwnerListView):
         return render(request, self.template_name, ctx)
 
 
+class AdDoneListView(OwnerListView):
+    model = Ad
+    template_name = "ads/all_done.html"
+
+    def get_queryset(self):
+        """
+        Override the default queryset to include only completed tasks.
+        """
+        return Ad.objects.filter(is_done=True)
+
+
 class AdDetailView(OwnerDetailView):
     model = Ad
     template_name = "ads/ad_detail.html"
-    #fields = ['title','price','text','tags','comments']
     def get(self, request, pk) :
         x = get_object_or_404(Ad, id=pk)
         comments = Comment.objects.filter(ad=x).order_by('-updated_at')
         comment_form = CommentForm()
         context = { 'ad' : x, 'comments': comments, 'comment_form': comment_form }
         return render(request, self.template_name, context)
+
 
 class AdCreateView(LoginRequiredMixin, View):
     template_name = 'ads/ad_form.html'
@@ -141,12 +157,12 @@ class AdUpdateView(LoginRequiredMixin, View):
 
 class AdDeleteView(OwnerDeleteView):
     model = Ad
-    fields = ['title','price','tags','text']
+    fields = ['title','price','text']
 
 class CommentCreateView(LoginRequiredMixin, View):
     def post(self, request, pk) :
         f = get_object_or_404(Ad, id=pk)
-        comment = Comment(text=request.POST['comment'], owner=request.user, ad=f)
+        comment = Comment(text=request.POST['text'], owner=request.user, ad=f)
         comment.save()
         return redirect(reverse('ads:ad_detail', args=[pk]))
 
@@ -162,9 +178,13 @@ def stream_file(request, pk):
     response.write(pic.picture)
     return response
 
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.db.utils import IntegrityError
+def mark_task_done(request, pk):
+    task = get_object_or_404(Ad, pk=pk)
+    if request.method == 'POST':
+        task.is_done = True
+        task.save()
+    return redirect('ads:all')
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddFavoriteView(LoginRequiredMixin, View):

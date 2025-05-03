@@ -4,3 +4,14 @@ key
 __pycache__
 github_settings.py
 settings.py
+.env
+
+
+venv/
+*.pyc
+__pycache__/
+media/
+static/
+node_modules/
+ckeditor/
+staticfiles/
